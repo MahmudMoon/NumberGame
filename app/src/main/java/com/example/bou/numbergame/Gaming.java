@@ -34,12 +34,15 @@ public class Gaming extends AppCompatActivity {
     TextView Attempt;
     MediaPlayer mediaPlayer;
     ImageButton restart;
+    boolean play_music,vibrate;
+    Intent intent;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gaming);
+
         init_views();
         init_variables();
         init_functions();
@@ -64,6 +67,10 @@ public class Gaming extends AppCompatActivity {
     }
 
     private void init_variables() {
+        intent = getIntent();
+        play_music = intent.getBooleanExtra("music",false);
+        vibrate = intent.getBooleanExtra("vibration",false);
+
        btnCollection = new Button[3];
        btnCollection[0] = btn1;
        btnCollection[1] = btn2;
@@ -76,7 +83,8 @@ public class Gaming extends AppCompatActivity {
 
         prepareingGame();
 
-        playBackMusic();
+        if(play_music)
+            playBackMusic();
 
         getHighestScore();
 
@@ -84,7 +92,7 @@ public class Gaming extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setHighestScore(Score);
-                if(mediaPlayer.isPlaying())
+                if(play_music && mediaPlayer.isPlaying())
                     mediaPlayer.stop();
                 finishAffinity();
             }
@@ -113,6 +121,7 @@ public class Gaming extends AppCompatActivity {
             public void run() {
                   mediaPlayer = MediaPlayer.create(getApplicationContext(),R.raw.back);
                   mediaPlayer.start();
+
             }
         };
 
@@ -169,7 +178,8 @@ public class Gaming extends AppCompatActivity {
                     SystemClock.sleep(2000);
                 }
 
-                mediaPlayer.stop();
+                    if(play_music)
+                        mediaPlayer.stop();
 
                  //  closeGame();
                  runOnUiThread(new Runnable() {
@@ -276,8 +286,12 @@ public class Gaming extends AppCompatActivity {
     }
 
     private void setVibration() {
-        Vibrator vibrator = (Vibrator)this.getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(100);
+        if(vibrate) {
+            Vibrator vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(100);
+        }else {
+            Toast.makeText(getApplicationContext(),"Vibration Off",Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void setHighestScore(int score) {
