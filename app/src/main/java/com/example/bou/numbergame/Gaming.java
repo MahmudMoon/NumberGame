@@ -6,12 +6,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -21,11 +24,13 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Gaming extends AppCompatActivity {
 
     Button[] btnCollection ;
     Button btn1,btn2,btn3,exit_;
+    Button btn4,btn5,btn6,btn7,btn8,btn9,btn10,btn11,btn12,btn13,btn14,btn15,btn16;
     int LowestValue;
     int Score = 0;
     TextView current_Score,highScore;
@@ -36,8 +41,8 @@ public class Gaming extends AppCompatActivity {
     ImageButton restart;
     boolean play_music,vibrate;
     Intent intent;
-
-
+   Button btnSelect[];
+    ArrayList<Integer> Numbers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,16 +53,27 @@ public class Gaming extends AppCompatActivity {
         init_functions();
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        setContentView(R.layout.activity_gaming);
-    }
 
     private void init_views() {
-        btn1 = (Button)findViewById(R.id.button);
-        btn2 = (Button)findViewById(R.id.button2);
-        btn3 = (Button)findViewById(R.id.button3);
+        btn1 = (Button)findViewById(R.id.btn_one);
+        btn2 = (Button)findViewById(R.id.btn_two);
+        btn3 = (Button)findViewById(R.id.btn_three);
+        btn4 = (Button)findViewById(R.id.btn_four);
+        btn5 = (Button)findViewById(R.id.btn_five);
+        btn6 = (Button)findViewById(R.id.btn_six);
+        btn7 = (Button)findViewById(R.id.btn_seven);
+        btn8 = (Button)findViewById(R.id.btn_eight);
+        btn9 = (Button)findViewById(R.id.btn_nine);
+        btn10 = (Button)findViewById(R.id.btn_ten);
+        btn11 = (Button)findViewById(R.id.btn_eleven);
+        btn12 = (Button)findViewById(R.id.btn_twelve);
+        btn13 = (Button)findViewById(R.id.btn_thirteen);
+        btn14 = (Button)findViewById(R.id.btn_fourteen);
+        btn15 = (Button)findViewById(R.id.btn_fifteen);
+        btn16 = (Button)findViewById(R.id.btn_sixteen);
+
+
+
         current_Score = (TextView)findViewById(R.id.tv_Score);
         exit_ = (Button)findViewById(R.id.btn_close_game);
         highScore = (TextView)findViewById(R.id.tv_highestScore);
@@ -67,14 +83,36 @@ public class Gaming extends AppCompatActivity {
     }
 
     private void init_variables() {
+        restart.setVisibility(View.INVISIBLE);
+
         intent = getIntent();
         play_music = intent.getBooleanExtra("music",false);
         vibrate = intent.getBooleanExtra("vibration",false);
+        Numbers = new ArrayList<>();
 
-       btnCollection = new Button[3];
+       btnCollection = new Button[16];
+        btnSelect = new Button[4];
+
        btnCollection[0] = btn1;
        btnCollection[1] = btn2;
        btnCollection[2] = btn3;
+        btnCollection[3] = btn4;
+        btnCollection[4] = btn5;
+        btnCollection[5] = btn6;
+        btnCollection[6] = btn7;
+        btnCollection[7] = btn8;
+        btnCollection[8] = btn9;
+        btnCollection[9] = btn10;
+        btnCollection[10] = btn11;
+        btnCollection[11] = btn12;
+        btnCollection[12] = btn13;
+        btnCollection[13] = btn14;
+        btnCollection[14] = btn15;
+        btnCollection[15] = btn16;
+
+
+
+
        sharedPreferences = getSharedPreferences("Highest Score",MODE_PRIVATE);
 
     }
@@ -108,9 +146,8 @@ public class Gaming extends AppCompatActivity {
     }
 
     private void prepareingGame() {
-        btn1.setVisibility(View.VISIBLE);
-        btn2.setVisibility(View.VISIBLE);
-        btn3.setVisibility(View.VISIBLE);
+        showALLButtons();
+        hideALLButtons();
         Score = 0;
         current_Score.setText(Integer.toString(Score));
     }
@@ -144,9 +181,12 @@ public class Gaming extends AppCompatActivity {
                     final int attemptLeft = 10 - gameLoop;
 
                     int previousNum = 11;
-                    final ArrayList<Integer> Numbers = new ArrayList<>();
+                    if(Numbers.size()>0){
+                        Numbers.clear();
+                    }
+
                     Random random = new Random();
-                    for (int i = 0; i < 3; i++) {
+                    for (int i = 0; i < 4; i++) {
                         int number = random.nextInt(10) + 1;
                         Integer integer = new Integer(number);
 
@@ -165,17 +205,17 @@ public class Gaming extends AppCompatActivity {
                   runOnUiThread(new Runnable() {
                       @Override
                       public void run() {
+                          showButtons();
                           Attempt.setText(Integer.toString(attemptLeft));
-                             btn1.setVisibility(View.VISIBLE);
-                             btn2.setVisibility(View.VISIBLE);
-                             btn3.setVisibility(View.VISIBLE);
-                          for(int j =0;j<3;j++){
-                              btnCollection[j].setText(Integer.toString(Numbers.get(j)));
-
+                          for(int j =0;j<4;j++){
+                              btnSelect[j].setText(Integer.toString(Numbers.get(j)));
                           }
+
+                          //hideVisibleButtons();
                       }
                   });
                     SystemClock.sleep(2000);
+
                 }
 
                     if(play_music)
@@ -185,9 +225,7 @@ public class Gaming extends AppCompatActivity {
                  runOnUiThread(new Runnable() {
                      @Override
                      public void run() {
-                         btn1.setVisibility(View.INVISIBLE);
-                         btn2.setVisibility(View.INVISIBLE);
-                         btn3.setVisibility(View.INVISIBLE);
+                         hideVisibleButtons();
                          restart.setVisibility(View.VISIBLE);
                          if(highestScore<Score) {
                              setHighestScore(Score);
@@ -209,6 +247,52 @@ public class Gaming extends AppCompatActivity {
 
     }
 
+    private void hideVisibleButtons() {
+        for(int i= 0;i<btnSelect.length;i++){
+            btnSelect[i].setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void hideALLButtons() {
+        for(int i= 0;i<btnCollection.length;i++){
+            if(btnCollection[i]!=null)
+                btnCollection[i].setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void showALLButtons() {
+        for(int i= 0;i<btnCollection.length;i++){
+            if(btnCollection[i]!=null)
+                btnCollection[i].setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void  showButtons(){
+       int fst = 0 + (int)(Math.random()*((3-0)+1));
+       int sec = 4 + (int)(Math.random() * ((7 - 4) + 1));
+       int thd = 8 + (int)(Math.random() * ((11 - 8) + 1));;
+       int forth = 12 + (int)(Math.random() * ((15 - 12) + 1));
+
+        Log.i("NumberOfBtnCollection",btnCollection.length+"");
+        Log.i("NumberOfBtnCollection",fst+"");
+        Log.i("NumberOfBtnCollection",sec+"");
+        Log.i("NumberOfBtnCollection",thd+"");
+        Log.i("NumberOfBtnCollection",forth+"");
+
+        hideALLButtons();
+
+       btnSelect[0] = btnCollection[fst];
+       btnSelect[1] = btnCollection[sec];
+       btnSelect[2] = btnCollection[thd];
+       btnSelect[3] = btnCollection[forth];
+
+       for(int i=0;i<4;i++){
+           btnSelect[i].setVisibility(View.VISIBLE);
+       }
+
+
+    }
+
 
 
     private void closeGame() {
@@ -220,69 +304,32 @@ public class Gaming extends AppCompatActivity {
 
     public void btn_clicked(View view) {
 
-        int id = view.getId();
-        switch (id){
-            case R.id.button:
-                int valueOftheButton1 = Integer.parseInt(btn1.getText().toString());
-                if(LowestValue==valueOftheButton1){
-                    Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
-                    Score+=1;
-                    current_Score.setText(Integer.toString(Score));
-                }else {
-                    Score-=1;
-                    if(Score<0){
-                        Score = 0;
-                    }
-                    current_Score.setText(Integer.toString(Score));
-                    setVibration();
-                }
-                hideButtons();
+        Button button = (Button)view;
+        int number = Integer.parseInt(button.getText().toString());
 
-                break;
-            case R.id.button2:
-                int valueOftheButton2 = Integer.parseInt(btn2.getText().toString());
-                if(LowestValue==valueOftheButton2){
-                    Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
-                    Score+=1;
-                    current_Score.setText(Integer.toString(Score));
-                }else {
-                    Score-=1;
-                    if(Score<0){
-                        Score = 0;
-                    }
-                    current_Score.setText(Integer.toString(Score));
-                    setVibration();
-
-                }
-
-                hideButtons();
-                break;
-            case R.id.button3:
-                int valueOftheButton3 = Integer.parseInt(btn3.getText().toString());
-                if(LowestValue==valueOftheButton3){
-                    Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
-                    Score+=1;
-                    current_Score.setText(Integer.toString(Score));
-                }else {
-                    Score-=1;
-                    if(Score<0){
-                        Score = 0;
-                    }
-                    current_Score.setText(Integer.toString(Score));
-                    setVibration();
-
-                }
-
-                hideButtons();
-                break;
+        if(LowestValue==number){
+            Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
+            Score+=1;
+            current_Score.setText(Integer.toString(Score));
+            button.setText("");
+            button.setBackgroundResource(R.drawable.success);
+        }else {
+            Score-=1;
+            if(Score<0){
+                Score = 0;
+            }
+            current_Score.setText(Integer.toString(Score));
+            setVibration();
         }
+        hideVisibleButtons();
+
 
     }
 
     private void hideButtons() {
-        btn1.setVisibility(View.INVISIBLE);
-        btn2.setVisibility(View.INVISIBLE);
-        btn3.setVisibility(View.INVISIBLE);
+        for(int i=0;i<btnSelect.length;i++){
+            btnSelect[i].setVisibility(View.INVISIBLE);
+        }
     }
 
     private void setVibration() {

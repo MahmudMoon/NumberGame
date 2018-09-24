@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 
 import java.nio.Buffer;
 import java.util.Set;
@@ -17,7 +18,7 @@ import java.util.Set;
 public class MainActivity extends AppCompatActivity {
 
     Button start;
-    CardView cardView;
+    LinearLayout linearLayout;
     Button setting;
     Button save;
     Button cancel;
@@ -44,12 +45,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        cardView.setVisibility(View.INVISIBLE);
+        linearLayout.setVisibility(View.INVISIBLE);
 
         setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cardView.setVisibility(View.VISIBLE );
+                linearLayout.setVisibility(View.VISIBLE );
                 getValuesFromSharedPref();
             }
         });
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setValueToSharedPref();
-                cardView.setVisibility(View.INVISIBLE);
+                linearLayout.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 getValuesFromSharedPref();
                 music_play.setChecked(play_music);
                 setVibreation.setChecked(vibrate);
-                cardView.setVisibility(View.INVISIBLE);
+                linearLayout.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void init_views() {
         start = (Button) findViewById(R.id.btn_start);
-        cardView = (CardView) findViewById(R.id.cardView);
+        linearLayout = (LinearLayout) findViewById(R.id.cardView);
         setting = (Button) findViewById(R.id.btn_settings);
         save = (Button) findViewById(R.id.btn_save);
         cancel = (Button)findViewById(R.id.btn_cancel);
